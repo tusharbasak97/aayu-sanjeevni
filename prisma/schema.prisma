@@ -1,0 +1,136 @@
+// Prisma schema for Aayu Sanjeevni NGO Healthcare Application
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  PAST
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  blogs  Blog[]
+  events Event[]
+}
+
+model Blog {
+  id            String        @id @default(cuid())
+  title         String
+  slug          String        @unique
+  content       String        @db.Text
+  excerpt       String?       @db.Text
+  coverImageUrl String?
+  coverImageAlt String?
+  status        ContentStatus @default(DRAFT)
+  authorId      String
+  author        Admin         @relation(fields: [authorId], references: [id])
+  publishedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  seo   SeoMeta?
+  media BlogMedia[]
+
+  @@index([status, publishedAt])
+  @@index([slug])
+}
+
+model Event {
+  id           String      @id @default(cuid())
+  title        String
+  slug         String      @unique
+  description  String      @db.Text
+  location     String?
+  eventDate    DateTime
+  eventEndDate DateTime?
+  status       EventStatus @default(UPCOMING)
+  authorId     String
+  author       Admin       @relation(fields: [authorId], references: [id])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  seo     SeoMeta?
+  gallery EventGallery[]
+
+  @@index([status, eventDate])
+  @@index([slug])
+}
+
+model SeoMeta {
+  id              String  @id @default(cuid())
+  metaTitle       String?
+  metaDescription String? @db.Text
+  focusKeywords   String?
+  canonicalUrl    String?
+
+  // Polymorphic relation — one of these will be set
+  blogId  String? @unique
+  blog    Blog?   @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  eventId String? @unique
+  event   Event?  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+model Media {
+  id           String    @id @default(cuid())
+  originalName String
+  originalUrl  String
+  optimizedUrl String
+  format       String // webp, webm, mp4
+  type         MediaType
+  sizeBytes    Int?
+  width        Int?
+  height       Int?
+  altText      String?
+  createdAt    DateTime  @default(now())
+
+  blogMedia    BlogMedia[]
+  eventGallery EventGallery[]
+
+  @@index([type])
+}
+
+model BlogMedia {
+  id        String @id @default(cuid())
+  blogId    String
+  blog      Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  mediaId   String
+  media     Media  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  sortOrder Int    @default(0)
+
+  @@unique([blogId, mediaId])
+}
+
+model EventGallery {
+  id        String @id @default(cuid())
+  eventId   String
+  event     Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  mediaId   String
+  media     Media  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  sortOrder Int    @default(0)
+
+  @@unique([eventId, mediaId])
+}
