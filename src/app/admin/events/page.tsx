@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Plus, Edit, Eye } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminEventsPage() {
   const events = await prisma.event.findMany({
     include: { author: { select: { name: true } } },

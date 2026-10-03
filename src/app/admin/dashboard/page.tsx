@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { FileText, CalendarDays, Image as ImageIcon, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboard() {
   const [blogCount, eventCount, mediaCount, publishedBlogs] =
     await Promise.all([

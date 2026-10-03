@@ -40,11 +40,16 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams() {
-  const blogs = await prisma.blog.findMany({
-    where: { status: "PUBLISHED" },
-    select: { slug: true },
-  });
-  return blogs.map((blog) => ({ slug: blog.slug }));
+  try {
+    const blogs = await prisma.blog.findMany({
+      where: { status: "PUBLISHED" },
+      select: { slug: true },
+    });
+    return blogs.map((blog) => ({ slug: blog.slug }));
+  } catch {
+    // DB unavailable at build time — pages will be generated on-demand
+    return [];
+  }
 }
 
 export default async function BlogDetailPage({

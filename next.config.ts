@@ -13,8 +13,8 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // Enable server-side Sharp and FFmpeg processing
-  serverExternalPackages: ["sharp", "fluent-ffmpeg"],
+  // Enable server-side Sharp processing
+  serverExternalPackages: ["sharp"],
 
   // OWASP Top 10 Security Headers
   async headers() {

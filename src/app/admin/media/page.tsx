@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
 import Image from "next/image";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminMediaPage() {
   const media = await prisma.media.findMany({
     orderBy: { createdAt: "desc" },

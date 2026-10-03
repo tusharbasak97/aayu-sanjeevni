@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import EventsClient from "@/components/public/EventsClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Events & Free Medical Camps | Aayu Sanjeevni",
   description:

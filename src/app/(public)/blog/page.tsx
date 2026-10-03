@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import BlogClient from "@/components/public/BlogClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Blog & Healthcare Awareness | Aayu Sanjeevni",
   description:

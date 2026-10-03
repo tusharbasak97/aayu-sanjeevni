@@ -38,10 +38,15 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams() {
-  const events = await prisma.event.findMany({
-    select: { slug: true },
-  });
-  return events.map((event) => ({ slug: event.slug }));
+  try {
+    const events = await prisma.event.findMany({
+      select: { slug: true },
+    });
+    return events.map((event) => ({ slug: event.slug }));
+  } catch {
+    // DB unavailable at build time — pages will be generated on-demand
+    return [];
+  }
 }
 
 export default async function EventDetailPage({
